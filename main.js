@@ -153,6 +153,7 @@ const actualizarCantidadCarrito = () => {
 const vaciarCarrito = () => {
   carro = [];
   localStorage.removeItem("carro");
+  costoTotal = 0;
   actualizarCantidadCarrito();
 };
 
