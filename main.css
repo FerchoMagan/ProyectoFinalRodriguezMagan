@@ -20,7 +20,8 @@ header nav div #loguito {
 }
 
 #imagencarrito {
-  width: 8rem;
+  width: 9rem;
+  padding-right: 1rem;
 }
 
 .carritodecompras {
@@ -34,6 +35,13 @@ header nav div #loguito {
   color: white;
   padding: 4px 8px;
   font-size: 3rem;
+}
+#tipo-input {
+  margin-left: 1rem;
+}
+
+#boton-buscar {
+  margin-left: 1rem;
 }
 
 #cantidadcarrito {
@@ -62,10 +70,8 @@ header nav ul li {
   justify-content: space-between;
 
 }
-.imagentienda{
-  border-radius: 2rem;
-  width: 50%;
-}
+
+
 main section {
   margin: 9.5rem 0rem 2rem 0rem;
   display: grid;
@@ -104,7 +110,7 @@ main section article div #posiciontienda {
 
 footer {
   background-color: rgba(0, 255, 111, 0.30);
-  margin-top: 2em;
+  margin-top: auto;
   font-size: 1.5rem;
 }
 
@@ -196,11 +202,7 @@ footer {
   display: grid;
 }
 
-.demostracion {
-  background-color: grey;
-  border-radius: 2rem;
-  padding: 1rem;
-}
+
 
 .demostracion button {
   font-size: 1.8rem;
@@ -215,17 +217,17 @@ footer {
 
 .demostracion form {
   margin-top: 4rem;
-  margin-bottom: 2rem;
 }
 
 #vaciar-carrito {
   border-radius: 3rem;
   margin-left: auto;
+  margin-right: 1rem;
 
 }
 main section h2 {
   font-size: 4rem;
-  margin-top: 4rem;
+  margin-top: 2.5rem;
   font-family: 'Roboto';
 }
 
@@ -240,12 +242,45 @@ main section p {
   padding: 0;
 }
 
-#tienda {
+/*#tienda {
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: 1fr 1fr 1fr;
   grid-gap: 2rem;
   justify-items: stretch;
   justify-content: space-around;
   align-items: stretch;
   padding: 2rem;
+}
+
+.demostracion {
+  background-color: grey;
+  border-radius: 2rem;
+  padding: 1rem;
+  
+}
+*/
+#tienda {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  grid-gap: 2rem;
+  padding: 2rem;
+ 
+}
+
+.demostracion {
+  background-color: grey;
+  border-radius: 2rem;
+  padding: 1rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+.imagentienda{
+  border-radius: 2rem;
+  width: 100%;
+  height: 50%;
+}
+.demostracion form {
+  margin-top: auto;
+  margin-top: 1rem;
 }

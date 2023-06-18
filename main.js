@@ -1,3 +1,4 @@
+
 const producto = {
   constructor(nombre, precio, stock, descripcion, tipo, img, id) {
     this.nombre = nombre;
@@ -27,7 +28,7 @@ const mostrarProducto = ({ nombre, precio, descripcion, stock, img, id }) => {
   const demostracion = document.createElement("div");
   demostracion.className = "demostracion";
   demostracion.innerHTML = `
-    <img class = "imagentienda" src="./archivos/${img}" alt="${nombre}"/>
+    <img class="imagentienda" src="./archivos/${img}" alt="${nombre}" />
     <h2>${nombre}</h2>
     <b><p>Descripcion:</b> ${descripcion}</p>
     <b><p>Precio:</b> $${precio.toFixed(2)}</p> 
@@ -50,6 +51,45 @@ const agregarAlCarro = (id) => {
     localStorage.setItem("carro", JSON.stringify(carro));
     actualizarCantidadCarrito();
   });
+};
+const mostrarCarrito = () => {
+  const tienda = document.querySelector("#tienda");
+  tienda.innerHTML = "<h2>Contenido del carrito:</h2>";
+
+  if (carro.length === 0) {
+    tienda.innerHTML += "<p>El carrito está vacío.</p>";
+  } else {
+    const carritoPorId = {};
+
+    carro.forEach(item => {
+      const producto = productos.find(p => p.id === item.id);
+      const cantidad = parseInt(item.cantidad);
+      const precioTotal = (producto.precio * cantidad).toFixed(2);
+
+      if (carritoPorId[item.id]) {
+        carritoPorId[item.id].cantidad += cantidad;
+        carritoPorId[item.id].precioTotal += parseFloat(precioTotal);
+      } else {
+        
+        carritoPorId[item.id] = {
+          producto,
+          cantidad,
+          precioTotal: parseFloat(precioTotal),
+        };
+      }
+    });
+    Object.values(carritoPorId).forEach(({ producto, cantidad, precioTotal }) => {
+      const demostracion = document.createElement("div");
+      demostracion.className = "demostracion";
+      demostracion.innerHTML = `
+        <img class="imagentienda" src="./archivos/${producto.img}" alt="${producto.nombre}" />
+        <h2>${producto.nombre}</h2>
+        <b><p>Cantidad Total: ${cantidad}</b></p>
+        <b><p>Precio Total: $${precioTotal.toFixed(2)}</b></p> 
+      `;
+      tienda.append(demostracion);
+    });
+  }
 };
 
 const mostrarProductos = () => {
@@ -87,7 +127,6 @@ tipoInput.addEventListener("keypress", (event) => {
   }
 });
 
-
 const actualizarCantidadCarrito = () => {
   const cantidadItems = document.getElementById("cantidad-items");
   cantidadItems.textContent = carro.length.toString();
@@ -102,26 +141,7 @@ const vaciarCarrito = () => {
 const botonVaciarCarrito = document.getElementById("vaciar-carrito");
 botonVaciarCarrito.addEventListener("click", vaciarCarrito);
 
+const imagencarrito = document.getElementById("imagencarrito");
+imagencarrito.addEventListener("click", mostrarCarrito);
+
 actualizarCantidadCarrito();
-
-const verCarrito = () => {
-  const carrito = JSON.parse(localStorage.getItem("carro")) || [];
-  
-  if (carrito.length === 0) {
-    console.log("El carrito está vacío.");}
-    else{
-  
-  console.log("Productos en el carrito:");
-  carrito.forEach((item) => {
-    const producto = productos.find((p) => p.id === item.id);
-    const precioTotal = producto.precio * item.cantidad;
-    
-    console.log("Nombre:", producto.nombre);
-    console.log("Cantidad:", item.cantidad);
-    console.log("Precio unitario:", producto.precio.toFixed(2));
-    console.log("Precio total:", precioTotal.toFixed(2));
-  });
-}
-};
-
-verCarrito();
