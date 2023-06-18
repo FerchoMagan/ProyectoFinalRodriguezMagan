@@ -1,4 +1,3 @@
-
 const producto = {
   constructor(nombre, precio, stock, descripcion, tipo, img, id) {
     this.nombre = nombre;
@@ -13,6 +12,8 @@ const producto = {
 
 let productos;
 let carro = JSON.parse(localStorage.getItem("carro")) || [];
+let costoTotal = 0;
+
 fetch('./productos.json')
   .then(response => response.json())
   .then(data => {
@@ -24,7 +25,7 @@ fetch('./productos.json')
   });
 
 const mostrarProducto = ({ nombre, precio, descripcion, stock, img, id }) => {
-  const tienda = document.querySelector("#tienda");
+  const tienda = document.getElementById("tienda");
   const demostracion = document.createElement("div");
   demostracion.className = "demostracion";
   demostracion.innerHTML = `
@@ -41,23 +42,39 @@ const mostrarProducto = ({ nombre, precio, descripcion, stock, img, id }) => {
   `;
   tienda.append(demostracion);
 };
-
+const calcularCostoTotal = () => {
+  costoTotal = carro.reduce((total, item) => {
+    const producto = productos.find(p => p.id === item.id);
+    const cantidad = parseInt(item.cantidad);
+    const precioTotal = producto.precio * cantidad;
+    return total + precioTotal;
+  }, 0);
+};
 const agregarAlCarro = (id) => {
-  const itemsCarro = document.querySelector(`#carrocompras${id}`);
+  const itemsCarro = document.getElementById(`carrocompras${id}`);
   itemsCarro.addEventListener("submit", (e) => {
     e.preventDefault();
     const cantidad = e.target.children["cantidad"].value;
     carro.push({ id: id, cantidad: cantidad });
     localStorage.setItem("carro", JSON.stringify(carro));
+    calcularCostoTotal();
     actualizarCantidadCarrito();
   });
 };
-const mostrarCarrito = () => {
-  const tienda = document.querySelector("#tienda");
-  tienda.innerHTML = "<h2>Contenido del carrito:</h2>";
 
+const mostrarCarrito = () => {
+  const tienda2 = document.getElementById("carroversifunciona");
+  tienda2.innerHTML = ` 
+  <h2 class='titulocarro'>Contenido del carrito:</h2>
+  <p>Total a pagar: $${costoTotal.toFixed(2)}</p>
+  
+  `
+
+  const tienda = document.getElementById("tienda");
+  tienda.innerHTML = "";
+ 
   if (carro.length === 0) {
-    tienda.innerHTML += "<p>El carrito está vacío.</p>";
+    tienda2.innerHTML += "<p class>El carrito está vacío!</p>";
   } else {
     const carritoPorId = {};
 
@@ -70,7 +87,6 @@ const mostrarCarrito = () => {
         carritoPorId[item.id].cantidad += cantidad;
         carritoPorId[item.id].precioTotal += parseFloat(precioTotal);
       } else {
-        
         carritoPorId[item.id] = {
           producto,
           cantidad,
@@ -89,6 +105,8 @@ const mostrarCarrito = () => {
       `;
       tienda.append(demostracion);
     });
+
+    costoTotal = Object.values(carritoPorId).reduce((total, { precioTotal }) => total + precioTotal, 0);
   }
 };
 
@@ -112,7 +130,7 @@ const buscarProductos = () => {
   const tienda = document.getElementById("tienda");
   tienda.innerHTML = "";
 
-  const busqueda = productosFiltrados.length === 0 ? tienda.innerHTML = `<p>No se encontraron productos de ese tipo.</p>` : productosFiltrados.forEach((producto) => {
+  const busqueda = productosFiltrados.length === 0 ? tienda.innerHTML = "<p>No se encontraron productos de ese tipo.</p>" : productosFiltrados.forEach((producto) => {
     mostrarProducto(producto);
   });
 };
