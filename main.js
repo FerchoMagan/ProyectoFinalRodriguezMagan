@@ -60,18 +60,14 @@ const agregarAlCarro = (id) => {
     localStorage.setItem("carro", JSON.stringify(carro));
     calcularCostoTotal();
     actualizarCantidadCarrito();
-    Swal.fire({
-      title: '¡Excelente!',
-      text: `Has agregado ${producto.nombre} al carrito!`,
-      icon: 'success',
-      showCancelButton: true,
-      confirmButtonText: 'Ver carrito',
-      cancelButtonText: 'Quiero seguir comprando',
-    }).then((result) => {
-      if (result.isConfirmed) {
+    Toastify({
+      text: `${producto.nombre} agregado al carrito!`,
+      duration: 2000,
+      stopOnFocus:true,
+      onClick: () => {
         mostrarCarrito();
-      }
-    })
+      },
+    }).showToast()
   });
 };
 
@@ -178,7 +174,7 @@ imagencarrito.addEventListener("click", () => {
         title: 'Oops...',
         text: 'El carrito está vacío!',
         icon: 'error',
-        confirmButtonText: 'Ok',
+        confirmButtonText: 'OK',
       }) 
       :
        mostrarCarrito();
