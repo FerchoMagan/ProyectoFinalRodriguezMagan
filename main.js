@@ -55,60 +55,72 @@ const agregarAlCarro = (id) => {
   itemsCarro.addEventListener("submit", (e) => {
     e.preventDefault();
     const cantidad = e.target.children["cantidad"].value;
+    const producto = productos.find(p => p.id === id);
     carro.push({ id: id, cantidad: cantidad });
     localStorage.setItem("carro", JSON.stringify(carro));
     calcularCostoTotal();
     actualizarCantidadCarrito();
+    Swal.fire({
+      title: '¡Excelente!',
+      text: `Has agregado ${producto.nombre} al carrito!`,
+      icon: 'success',
+      showCancelButton: true,
+      confirmButtonText: 'Ver carrito',
+      cancelButtonText: 'Quiero seguir comprando',
+    }).then((result) => {
+      if (result.isConfirmed) {
+        mostrarCarrito();
+      }
+    })
   });
 };
 
+
 const mostrarCarrito = () => {
   const tienda2 = document.getElementById("carroversifunciona");
-  tienda2.innerHTML = ` 
-  <h2 class='titulocarro'>Contenido del carrito:</h2>
-  <p>Total a pagar: $${costoTotal.toFixed(2)}</p>
-  
-  `
-
   const tienda = document.getElementById("tienda");
+  tienda2.innerHTML = ` 
+    <h2 class='titulocarro'>Contenido del carrito:</h2>
+    <p>Total a pagar: $${costoTotal.toFixed(2)}</p>
+  `;
   tienda.innerHTML = "";
- 
-  if (carro.length === 0) {
-    tienda2.innerHTML += "<p class>El carrito está vacío!</p>";
-  } else {
-    const carritoPorId = {};
 
-    carro.forEach(item => {
-      const producto = productos.find(p => p.id === item.id);
-      const cantidad = parseInt(item.cantidad);
-      const precioTotal = (producto.precio * cantidad).toFixed(2);
+  const carritoPorId = {};
 
-      if (carritoPorId[item.id]) {
-        carritoPorId[item.id].cantidad += cantidad;
-        carritoPorId[item.id].precioTotal += parseFloat(precioTotal);
-      } else {
-        carritoPorId[item.id] = {
+  carro.forEach((item) => {
+    const producto = productos.find((p) => p.id === item.id);
+    const cantidad = parseInt(item.cantidad);
+    const precioTotal = (producto.precio * cantidad).toFixed(2);
+
+    carritoPorId[item.id] ? 
+    ((carritoPorId[item.id].cantidad += cantidad),
+    (carritoPorId[item.id].precioTotal += parseFloat(precioTotal)))
+      : (carritoPorId[item.id] = {
           producto,
           cantidad,
           precioTotal: parseFloat(precioTotal),
-        };
-      }
-    });
-    Object.values(carritoPorId).forEach(({ producto, cantidad, precioTotal }) => {
-      const demostracion = document.createElement("div");
-      demostracion.className = "demostracion";
-      demostracion.innerHTML = `
-        <img class="imagentienda" src="./archivos/${producto.img}" alt="${producto.nombre}" />
-        <h2>${producto.nombre}</h2>
-        <b><p>Cantidad Total: ${cantidad}</b></p>
-        <b><p>Precio Total: $${precioTotal.toFixed(2)}</b></p> 
-      `;
-      tienda.append(demostracion);
-    });
+        });
+  });
 
-    costoTotal = Object.values(carritoPorId).reduce((total, { precioTotal }) => total + precioTotal, 0);
-  }
+  Object.values(carritoPorId).forEach(({ producto, cantidad, precioTotal }) => {
+    const demostracion = document.createElement("div");
+    demostracion.className = "demostracion";
+    demostracion.innerHTML = `
+      <img class="imagentienda" src="./archivos/${producto.img}" alt="${producto.nombre}" />
+      <h2>${producto.nombre}</h2>
+      <b><p>Cantidad Total: ${cantidad}</b></p>
+      <b><p>Precio Total: $${precioTotal.toFixed(2)}</b></p> 
+    `;
+    tienda.append(demostracion);
+  });
+
+  costoTotal = Object.values(carritoPorId).reduce(
+    (total, { precioTotal }) => total + precioTotal,
+    0
+  );
 };
+
+
 
 const mostrarProductos = () => {
   productos.forEach((producto) => {
@@ -161,6 +173,15 @@ const botonVaciarCarrito = document.getElementById("vaciar-carrito");
 botonVaciarCarrito.addEventListener("click", vaciarCarrito);
 
 const imagencarrito = document.getElementById("imagencarrito");
-imagencarrito.addEventListener("click", mostrarCarrito);
+imagencarrito.addEventListener("click", () => {
+  carro.length === 0 ? Swal.fire({
+        title: 'Oops...',
+        text: 'El carrito está vacío!',
+        icon: 'error',
+        confirmButtonText: 'Ok',
+      }) 
+      :
+       mostrarCarrito();
+});
 
 actualizarCantidadCarrito();
