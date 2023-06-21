@@ -163,7 +163,6 @@ const buscarProductos = () => {
 
   const tienda = document.getElementById("tienda");
   tienda.innerHTML = "";
-
   const busqueda = productosFiltrados.length === 0 ? tienda.innerHTML = "<p>No se encontraron productos de ese tipo.</p>" : productosFiltrados.forEach((producto) => {
     mostrarProducto(producto);
   });
