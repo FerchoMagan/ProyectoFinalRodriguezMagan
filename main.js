@@ -14,15 +14,16 @@ let productos;
 let carro = JSON.parse(localStorage.getItem("carro")) || [];
 let costoTotal = 0;
 
-fetch('./productos.json')
-  .then(response => response.json())
-  .then(data => {
+const obtenerProductos = async () => {
+  try {
+    const response = await fetch('./productos.json');
+    const data = await response.json();
     productos = data;
     mostrarProductos();
-  })
-  .catch(error => {
+  } catch (error) {
     console.log('Error al cargar el archivo JSON:', error);
-  });
+  }
+};
 
 const mostrarProducto = ({ nombre, precio, descripcion, stock, img, id }) => {
   const tienda = document.getElementById("tienda");
@@ -42,6 +43,7 @@ const mostrarProducto = ({ nombre, precio, descripcion, stock, img, id }) => {
   `;
   tienda.append(demostracion);
 };
+
 const calcularCostoTotal = () => {
   costoTotal = carro.reduce((total, item) => {
     const producto = productos.find(p => p.id === item.id);
@@ -50,6 +52,7 @@ const calcularCostoTotal = () => {
     return total + precioTotal;
   }, 0);
 };
+
 const agregarAlCarro = (id) => {
   const itemsCarro = document.getElementById(`carrocompras${id}`);
   itemsCarro.addEventListener("submit", (e) => {
@@ -70,7 +73,6 @@ const agregarAlCarro = (id) => {
     }).showToast()
   });
 };
-
 
 const mostrarCarrito = () => {
   const tienda2 = document.getElementById("carroversifunciona");
@@ -105,18 +107,42 @@ const mostrarCarrito = () => {
       <img class="imagentienda" src="./archivos/${producto.img}" alt="${producto.nombre}" />
       <h2>${producto.nombre}</h2>
       <b><p>Cantidad Total: ${cantidad}</b></p>
-      <b><p>Precio Total: $${precioTotal.toFixed(2)}</b></p> 
+      <b><p>Precio Total: $${precioTotal.toFixed(2)}</b></p>
+      <button class="eliminar-item" data-id="${producto.id}">Eliminar</button>
     `;
     tienda.append(demostracion);
+  });
+
+  const botonesEliminar = document.getElementsByClassName("eliminar-item");
+  Array.from(botonesEliminar).forEach((boton) => {
+    boton.addEventListener("click", () => {
+      const id = boton.getAttribute("data-id");
+      eliminarItemCarrito(id);
+    });
   });
 
   costoTotal = Object.values(carritoPorId).reduce(
     (total, { precioTotal }) => total + precioTotal,
     0
-  );
+  ); 
 };
 
-
+const eliminarItemCarrito = (id) => {
+  const indice = carro.findIndex((item) => item.id === id);
+  if (indice !== -1) {
+    const producto = productos.find((p) => p.id === id);
+    carro.splice(indice, 1);
+    localStorage.setItem('carro', JSON.stringify(carro));
+    calcularCostoTotal();
+    actualizarCantidadCarrito();
+    mostrarCarrito();
+    Toastify({
+      text: `${producto.nombre} eliminado del carrito`,
+      duration: 2000,
+      stopOnFocus: true,
+    }).showToast();
+  }
+};
 
 const mostrarProductos = () => {
   productos.forEach((producto) => {
@@ -145,6 +171,7 @@ const buscarProductos = () => {
 
 const botonBuscar = document.getElementById("boton-buscar");
 botonBuscar.onclick = buscarProductos;
+
 const tipoInput = document.getElementById("tipo-input");
 tipoInput.addEventListener("keypress", (event) => {
   if (event.key === "Enter") {
@@ -180,4 +207,5 @@ imagencarrito.addEventListener("click", () => {
        mostrarCarrito();
 });
 
+obtenerProductos();
 actualizarCantidadCarrito();
