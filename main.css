@@ -211,7 +211,12 @@ footer {
   background-color: blueviolet;
 
 }
+.pagar-carrito {
+  font-size: 4rem;
+  border-radius: 2rem;
+  background-color: rgb(116, 43, 226);
 
+}
 .demostracion label {
   font-size: 2rem;
 }

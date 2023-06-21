@@ -80,6 +80,7 @@ const mostrarCarrito = () => {
   tienda2.innerHTML = ` 
     <h2 class='titulocarro'>Contenido del carrito:</h2>
     <p>Total a pagar: $${costoTotal.toFixed(2)}</p>
+    <button id="boton-pagar" class="pagar-carrito">Pagar</button>
   `;
   tienda.innerHTML = "";
 
@@ -120,11 +121,22 @@ const mostrarCarrito = () => {
       eliminarItemCarrito(id);
     });
   });
-
-  costoTotal = Object.values(carritoPorId).reduce(
-    (total, { precioTotal }) => total + precioTotal,
-    0
-  ); 
+/* 
+Aca tengo en mente que para pagar necesito agregar una api para que se realize el pago y demas, pero bueno, obviamente no tengo la key
+es solo a modo de muestra visual.
+*/ 
+  const botonPagar = document.getElementById("boton-pagar");
+botonPagar.addEventListener("click", () => {
+  vaciarCarrito();
+  Toastify({
+    text: 'Pago realizado con éxito!',
+    duration: 2000,
+    stopOnFocus: true,
+  }).showToast();
+  const redirectUrl = 'https://www.mercadopago.com.ar/';
+  const newTab = window.open();
+  newTab.location.href = redirectUrl;
+});
 };
 
 const eliminarItemCarrito = (id) => {
@@ -163,6 +175,7 @@ const buscarProductos = () => {
 
   const tienda = document.getElementById("tienda");
   tienda.innerHTML = "";
+
   const busqueda = productosFiltrados.length === 0 ? tienda.innerHTML = "<p>No se encontraron productos de ese tipo.</p>" : productosFiltrados.forEach((producto) => {
     mostrarProducto(producto);
   });
